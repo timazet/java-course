@@ -30,6 +30,11 @@ public class JdbcDogService implements DogService {
     }
 
     // doesn't have to be @Transactional since doSaveDogs() is transactional anyway
+    // That's not true.
+    // The problem is that we use runtime proxying and according to that we redirect each call to proxy to the proxied target.
+    // But here we call proxied target method inside another proxied target method, therefore there is no
+    // transactional rollback logic for runtime exceptions.
+    @Transactional
     @Override public void createNewDogsAndIgnoreAlreadySaved(List<Dog> dogs) {
         List<Dog> toSave = new ArrayList<>();
         for (Dog dog : dogs) if(dog.getId() == null) toSave.add(dog);
