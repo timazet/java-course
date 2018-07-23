@@ -5,6 +5,7 @@ import java.util.Objects;
 public class Human {
     private int id;
     private String name;
+    private String dogId;
 
     public int getId() {
         return id;
@@ -24,14 +25,22 @@ public class Human {
         return this;
     }
 
+    public String getDogId() {
+        return dogId;
+    }
+
+    public void setDogId(String dogId) {
+        this.dogId = dogId;
+    }
+
     @Override public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Human human = (Human) o;
-        return id == human.id;
+        return Objects.equals(name, human.name) && Objects.equals(dogId, human.dogId);
     }
 
     @Override public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(name, dogId);
     }
 }

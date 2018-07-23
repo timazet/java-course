@@ -1,8 +1,8 @@
 package io.qala.javatraining.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.qala.javatraining.utils.Past;
 import io.qala.javatraining.utils.NotBlankSized;
+import io.qala.javatraining.utils.Past;
 
 import javax.validation.constraints.DecimalMin;
 import java.time.Instant;
@@ -12,7 +12,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import static io.qala.datagen.RandomShortApi.*;
+import static io.qala.datagen.RandomShortApi.Long;
+import static io.qala.datagen.RandomShortApi.alphanumeric;
+import static io.qala.datagen.RandomShortApi.nullOr;
+import static io.qala.datagen.RandomShortApi.positiveDouble;
+import static io.qala.datagen.RandomShortApi.positiveInteger;
 
 public class Dog {
     private String id = UUID.randomUUID().toString();
@@ -49,6 +53,18 @@ public class Dog {
 
         dog.weight = positiveDouble();
         dog.height = positiveInteger();
+
+        // There are two problems:
+        // 1. typical hashcode and equals problem
+        // 2. incomplete mapping for Human entity
+
+        // Set is used as a container for storing many-to-one related entities, hashcode and equals use "id" as distinction
+        // Human entity uses increment id generator for "id" field
+        // But during random data generation we put human objects into Set without specifying their ids,
+        // and during Dog objects creating we create Human objects using increment id generator for "id".
+        // Therefore we modified hashcode for Human objects and contains method will work incorrectly,
+        // because it's based on hashcode usage.
+
         dog.owners = new HashSet<>();
         dog.owners.add(new Human().setName(alphanumeric(1, 100)));
         dog.owners.add(new Human().setName(alphanumeric(1, 100)));
